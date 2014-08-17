@@ -1,0 +1,15 @@
+{
+  "name": "jshtml",
+  "repository": "git://github.com/weswigham/jshtml",
+  "version": "0.0.1",
+  "license": "MIT",
+  "description": "A simple, fast, testable template engine.",
+  "keywords": [
+    "template",
+    "engine",
+    "express",
+    "dsl",
+    "html"
+  ],
+  "main": "index.js"
+}

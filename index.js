@@ -12,12 +12,16 @@ function toAttr(obj) {
 }
 
 var alternator = false;
-var xml = Proxy.create({
+var xml = Proxy.create({ //TODO: Proxy as a function and let calling the context pass an object to expose as $scope
   getPropertyDescriptor: function(key, rec) {
     return {
       value: (function() {
         if (key === '$') {
-          return function(str) {
+          return function(str, noEscape) {
+            var escape = escape;
+            if (noEscape) {
+              escape = function(s) {return s;};
+            }
             if (typeof(str) === 'function') {
               buffer += escape((/\/\*!?(?:\@preserve)?[ \t]*(?:\r\n|\n)([\s\S]*?)(?:\r\n|\n)\s*\*\//).exec(str.toString())[1]);
             } else {
@@ -27,17 +31,15 @@ var xml = Proxy.create({
         }
         alternator = !alternator;
         if (alternator) {
-          return;
+          return; //Skip every other invocation - called twice for HasBinding and HasOwnBinding. Or something.
         }
         if (key.slice(-1) === '$') {
-          console.log("Got single-tag at: ", buffer);
           (buffer += "<"+key.slice(0,key.length-1)+" />");
           return function(obj) {
             var attr = toAttr(obj);
             buffer = buffer.slice(0,buffer.length-3)
             buffer += " " + attr + " />"
             attr = null;
-            console.log("Got single attribute applied at: ", buffer);
           }
         } else if (key.slice(0,1) === ('$')) {
           (buffer += "</"+key.slice(1)+">");
@@ -55,31 +57,12 @@ var xml = Proxy.create({
   }
 });
 
-function buildInlineXml() {
-  with (xml) {
-    html
-      head
-        meta$({title: "wat"})
-      $head
-      body({style: "width: 100%;"})
-        p; h1({style: "text-align: right;"}); $("Title text"); $h1 //Semicolons allow for multiple on one line
-          $("Paragraph content!!")
-        $p
-        hr$
-        p
-          $("Escaped <html> & such.")
-        $p
-        p
-          $(function() {/*
-            Or long form
-            for all the content.
-          */})        
-        $p
-      $body
-    $html
+module.exports = {
+  buffer: "", //TODO: Output format builders
+  string: "",
+  xml: "",
+  dom: "",
+  create: function(builder) { //TODO: Create proxy with given builder
+  
   }
-}
-
-buildInlineXml();
-
-console.log(buffer);
+};

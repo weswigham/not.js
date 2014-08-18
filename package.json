@@ -11,5 +11,15 @@
     "dsl",
     "html"
   ],
-  "main": "index.js"
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --harmony"
+  },
+  "devDependencies": {
+    "mocha": "~1.21",
+    "chai": "~1.9"
+  },
+  "engines": {
+    "node": "~0.10"
+  }
 }

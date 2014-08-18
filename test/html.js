@@ -2,7 +2,7 @@
 require('chai').should();
 
 describe('the jshtml dsl', function() {
-  it('is a consice way of representing html in javascript', function() {
+  it('is an intuitive, consice way of representing and creating html in javascript', function() {
   
     var context = jshtml.create(jshtml.string); //Get a dsl context object
     var scope = { //Make a scope to allow calling within the dsl
@@ -13,15 +13,19 @@ describe('the jshtml dsl', function() {
     with (context("$scope", scope)) {
     
       //Any valid identifier is a used as a tag (with some exceptions, see below)
-      html 
-        head 
+      html
+        head
           
           //Set attributes by 'calling' the tag with them (does not function on closing tags, obviously)
-          meta$({title: "wat"}) //Identifiers ending with a $ are 'self-closing' tags
+          meta$({title: "jshtml wat?"}) //Identifiers ending with a $ are 'self-closing' tags
+          
         $head //Identifiers starting with a $ are closing tags
+        
         body({style: "width: 100%;"})
+        
           //Use the $ function to make a text node
-          p; h1({style: "text-align: right;"}); $("Title text"); $h1 //Semicolons allow for multiple on one line
+          p; h1({style: "text-align: right;"}); $("Title text"); $h1 //Semicolons allow for multiple tags on one line
+          
             $($scope.paragraph) //Access scoped variables that won't be intercepted by the dsl using the specified name
           $p
           hr$
@@ -33,7 +37,7 @@ describe('the jshtml dsl', function() {
             $(function() {/*
               Or long form
               for all the content.
-            */})        
+            */})
           $p
           
           //Include plain js logic inline with your template!
@@ -46,7 +50,7 @@ describe('the jshtml dsl', function() {
       $html
     }
     context.collect().should.be.equal(
-'<html><head><meta title=\"wat\" /></head><body style=\"width: 100%;\"><p><h1 style=\"text-align: right;\">Title '+
+'<html><head><meta title=\"jshtml wat?\" /></head><body style=\"width: 100%;\"><p><h1 style=\"text-align: right;\">Title '+
 'text</h1>Paragraph content!!</p><hr /><p>Unescaped html <strong> and such. </strong></p><p>              Or long form<br'+
 ' />              for all the content.</p><p>I&#39;m number 0!</p><p>I&#39;m number 1!</p><p>I&#39;m number 2!</p><p>I&#3'+
 '9;m number 3!</p></body></html>'

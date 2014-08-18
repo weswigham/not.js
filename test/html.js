@@ -6,7 +6,12 @@ describe('the jshtml dsl', function() {
   
     var context = jshtml.create(jshtml.string); //Get a dsl context object
     var scope = { //Make a scope to allow calling within the dsl
-      paragraph: "Paragraph content!!"
+      partial: require('./partial.js'),
+      paragraph: "Paragraph content!!",
+      sublayout: {
+        title: "Sublayout title!",
+        items: ["Foo", "Bar", "Baz", "Bat"]
+      }
     };
     //Call the context with the name you want the scope accessible by and the scope object itself
     //"$scope" is the default and may be omitted
@@ -46,6 +51,9 @@ describe('the jshtml dsl', function() {
               $("I'm number "+$scope.i+"!");
             $p
           }
+          
+          //And yes, including partials is a thing that's pretty simple, too
+          $($scope.partial($scope.sublayout), true)
         $body
       $html
     }
@@ -53,7 +61,8 @@ describe('the jshtml dsl', function() {
 '<html><head><meta title=\"jshtml wat?\" /></head><body style=\"width: 100%;\"><p><h1 style=\"text-align: right;\">Title '+
 'text</h1>Paragraph content!!</p><hr /><p>Unescaped html <strong> and such. </strong></p><p>              Or long form<br'+
 ' />              for all the content.</p><p>I&#39;m number 0!</p><p>I&#39;m number 1!</p><p>I&#39;m number 2!</p><p>I&#3'+
-'9;m number 3!</p></body></html>'
+'9;m number 3!</p><h1>Sublayout title!</h1><ul class=\"un-list\"><li>Item: 0</li><li>Item: 1</li><li>Item: 2</li><li>Item'+
+': 3</li></ul></body></html>'
     );
   });
 });

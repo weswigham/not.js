@@ -65,4 +65,21 @@ describe('the jshtml dsl', function() {
 ': 3</li></ul></body></html>'
     );
   });
+  
+  it('has a shorthand syntax where you pass any closure and it\'s treated like a jshtml-enabled function', function() {
+    var scope = {
+      content: "body content"
+    };
+    var block = function() {
+      html
+        body
+          $($scope.content)
+        $body
+      $html
+    };
+    
+    var str = jshtml.renderFunc(block, scope);
+    
+    str.should.be.equal('<html><body>'+scope.content+'</body></html>');
+  });
 });

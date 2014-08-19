@@ -111,5 +111,12 @@ module.exports = {
   string: stringBuilder, //TODO: Output format builders
   create: function(builder) {
     return jshtmlProxy((builder && new builder()) || new stringBuilder());
+  },
+  renderFunc: function(func, scope, builder) { //Yeah, I had to hack this on, too.
+    var builder = builder || stringBuilder;
+    var proxy = jshtmlProxy(new builder());
+    var scope = scope || {};
+    eval("with (proxy(scope)) {("+func.toString()+")() }");
+    return proxy.collect();
   }
 };

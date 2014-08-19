@@ -1,4 +1,4 @@
-﻿var notjs = require('../index');
+﻿var notjs = require('../not');
 require('chai').should();
 
 describe('the not.js html dsl', function() {

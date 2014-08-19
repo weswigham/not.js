@@ -1,9 +1,9 @@
 {
-  "name": "jshtml",
-  "repository": "git://github.com/weswigham/jshtml",
+  "name": "not.js",
+  "repository": "git://github.com/weswigham/not.js",
   "version": "0.0.1",
   "license": "MIT",
-  "description": "A simple, fast, testable template engine.",
+  "description": "A simple, html template dsl.",
   "keywords": [
     "template",
     "engine",
@@ -11,9 +11,12 @@
     "dsl",
     "html"
   ],
-  "main": "index.js",
+  "main": "not.js",
   "scripts": {
     "test": "mocha --harmony"
+  },
+  "dependencies": {
+    "escape-html": "~1.0.1"
   },
   "devDependencies": {
     "mocha": "~1.21",

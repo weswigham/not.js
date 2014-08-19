@@ -1,4 +1,4 @@
-var notjs = require('../index');
+var notjs = require('../not');
 
 module.exports = function(scope) {
   var context = notjs.create(); //Get a dsl context object, let the string builder be implied

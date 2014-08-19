@@ -18,6 +18,10 @@ stringBuilder.prototype._toAttr = function(obj) {
   return ret.join(' ');
 }
 
+stringBuilder.prototype.reset = function() {
+  this.buffer = '';
+}
+
 stringBuilder.prototype.complete = function() {
   return this.buffer;
 };
@@ -63,7 +67,7 @@ function jshtmlProxy(builder) {
       scopeName = defaultScopeName;
     }
     var alternator = false;
-    return Proxy.create({
+    return Proxy.create({ //TODO: Alternate implementation for the newer harmony proxy API supported by Firefox
       getPropertyDescriptor: function(key, rec) {
         return {
           value: (function() {
@@ -106,6 +110,10 @@ function jshtmlProxy(builder) {
   ret.collect = function() {
     return builder.complete();
   };
+  
+  ret.restart = function() {
+    builder.reset();
+  }
   
   return ret;
 }
@@ -150,11 +158,13 @@ function renderPath(path, options, cb) {
       err = e;
     }
   }
-  cb(err, ret);
+  process.nextTick(function() {
+    cb(err, ret);
+  });
 }
 
 module.exports = {
-  string: stringBuilder, //TODO: More output format builders
+  string: stringBuilder, //TODO: More output format builders, eg DOM Objects, Buffer
   create: function(builder) {
     return jshtmlProxy((builder && new builder()) || new stringBuilder());
   },

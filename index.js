@@ -1,7 +1,7 @@
 var escape = require('escape-html');
 
 function stringBuilder() {
-  this.buffer = "";
+  this.buffer = '';
 };
 
 stringBuilder.prototype._toAttr = function(obj) {
@@ -9,9 +9,9 @@ stringBuilder.prototype._toAttr = function(obj) {
   for (var key in obj) {
     if (obj.hasOwnProperty(key)) {
       if (obj[key] === null) {
-        ret.push(""+key);
+        ret.push(''+key);
       } else {
-        ret.push(""+key+"=\""+obj[key]+"\"");
+        ret.push(''+key+'="'+obj[key]+'"');
       }
     }
   }
@@ -23,26 +23,26 @@ stringBuilder.prototype.complete = function() {
 };
 
 stringBuilder.prototype.pushStartToken = function(name) {
-  this.buffer += "<"+name+">";
+  this.buffer += '<'+name+'>';
 };
 
 stringBuilder.prototype.rewriteStartTokenAttributes = function(obj) {
   var attr = this._toAttr(obj);
-  this.buffer = this.buffer.slice(0, this.buffer.length-1) +" "+ attr + ">"
+  this.buffer = this.buffer.slice(0, this.buffer.length-1) +' '+ attr + '>'
 };
 
 stringBuilder.prototype.pushEndToken = function(name) {
-  this.buffer += "</"+name+">";
+  this.buffer += '</'+name+'>';
 };
 
 stringBuilder.prototype.pushSingleToken = function(name) {
-  this.buffer += "<"+name+" />";
+  this.buffer += '<'+name+' />';
 };
 
 stringBuilder.prototype.rewriteSingleTokenAttributes = function(obj) {
   var attr = this._toAttr(obj);
   this.buffer = this.buffer.slice(0,this.buffer.length-3);
-  this.buffer += " " + attr + " />";
+  this.buffer += ' ' + attr + ' />';
 };
 
 stringBuilder.prototype.pushRaw = function(str, noEscape) {
@@ -53,11 +53,14 @@ stringBuilder.prototype.pushRaw = function(str, noEscape) {
   }
 };
 
+var indicator = '$';
+var defaultScopeName = indicator+'scope';
+
 function jshtmlProxy(builder) {
   var ret = function(scopeName, scope) {
     if (!scope) {
       scope = scopeName;
-      scopeName = "$scope";
+      scopeName = defaultScopeName;
     }
     var alternator = false;
     return Proxy.create({
@@ -67,7 +70,7 @@ function jshtmlProxy(builder) {
             if (key === scopeName) {
               return scope; 
             }
-            if (key === '$') {
+            if (key === indicator) {
               return function(str, noEscape) {
                 if (typeof(str) === 'function') {
                   builder.pushRaw((/\/\*!?(?:\@preserve)?[ \t]*(?:\r\n|\n)([\s\S]*?)(?:\r\n|\n)\s*\*\//).exec(str.toString())[1], noEscape);
@@ -80,12 +83,12 @@ function jshtmlProxy(builder) {
             if (alternator) {
               return; //Skip every other invocation - called twice for HasBinding and HasOwnBinding. Or something.
             }
-            if (key.slice(-1) === '$') {
+            if (key.slice(-1) === indicator) {
               builder.pushSingleToken(key.slice(0,key.length-1));
               return function(obj) {
                 builder.rewriteSingleTokenAttributes(obj);
               }
-            } else if (key.slice(0,1) === ('$')) {
+            } else if (key.slice(0,1) === indicator) {
               builder.pushEndToken(key.slice(1));
             } else {
               builder.pushStartToken(key);
@@ -107,16 +110,56 @@ function jshtmlProxy(builder) {
   return ret;
 }
 
+var funcStringCache = {}; //Cache stringified functions for implied usage
+
+function prepareFunc(func, builder) { //Prepare an implied function for repeated use
+  funcStringCache[func] = funcStringCache[func] || ('with (proxy(scope)) {('+func.toString()+')() }');
+  
+  return function(scope) {
+    var scope = scope || {};
+    var builder = builder || stringBuilder;
+    var proxy = jshtmlProxy(new builder());
+    eval(funcStringCache[func]);
+    return proxy.collect();
+  }
+}
+
+function renderFunction(func, scope, builder) { 
+  return prepareFunc(func, builder)(scope);
+}
+
+function renderPath(path, options, cb) {
+  if (typeof(options) === 'function') {
+    cb = options;
+    options = {};
+  }
+  
+  var func = require(path); //Yes.
+  var ret;
+  var err;
+  if (options.explicit) { //Assume implied use rather than explicit 'with' by default
+    try {
+      ret = func(options.scope);
+    } catch (e) {
+      err = e;
+    }
+  } else {
+    try {
+      ret = renderFunction(func, options.scope, options.builder);
+    } catch (e) {
+      err = e;
+    }
+  }
+  cb(err, ret);
+}
+
 module.exports = {
-  string: stringBuilder, //TODO: Output format builders
+  string: stringBuilder, //TODO: More output format builders
   create: function(builder) {
     return jshtmlProxy((builder && new builder()) || new stringBuilder());
   },
-  renderFunc: function(func, scope, builder) { //Yeah, I had to hack this on, too.
-    var builder = builder || stringBuilder;
-    var proxy = jshtmlProxy(new builder());
-    var scope = scope || {};
-    eval("with (proxy(scope)) {("+func.toString()+")() }");
-    return proxy.collect();
-  }
+  prepareFunc: prepareFunc,
+  renderFunc: renderFunction,
+  renderPath: renderPath,
+  __express: renderPath
 };

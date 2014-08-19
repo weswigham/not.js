@@ -1,15 +1,17 @@
-var jshtml = require('../index');
+var notjs = require('../index');
 
 module.exports = function(scope) {
-  var context = jshtml.create(jshtml.string); //Get a dsl context object
+  var context = notjs.create(); //Get a dsl context object, let the string builder be implied
   with(context(scope)) {
   
     h1; $($scope.title); $h1
-    ul({class: "un-list"})
+    ul({class: 'un-list'})
     for ($scope.scratch in $scope.items) {
-      li
-        $("Item: "+$scope.scratch)
-      $li
+      if ($scope.items.hasOwnProperty($scope.scratch)) {
+        li
+          $('Item: '+$scope.items[$scope.scratch])
+        $li
+      }
     }
     $ul
     

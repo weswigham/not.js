@@ -1,61 +1,139 @@
 var escape = require('escape-html');
 
 function stringBuilder() {
-  this.buffer = '';
+  this.buffer = [];
 };
 
 stringBuilder.prototype._toAttr = function(obj) {
   var ret = [];
   for (var key in obj) {
     if (obj.hasOwnProperty(key)) {
-      if (obj[key] === null) {
-        ret.push(''+key);
+      if(key === 'data' && typeof(obj[key]) === 'object') {
+        for (var subkey in obj[key]) {
+          if (obj[key].hasOwnProperty(subkey)) {
+            ret.push('data-'+subkey+'="'+obj.data[subkey]+'"');
+          }
+        }
       } else {
         ret.push(''+key+'="'+obj[key]+'"');
       }
     }
   }
-  return ret.join(' ');
+  
+  var str = new String(ret.join(' ')); //Wrap with 'String' so it has methods/properties
+  str.original = obj;
+  return str;
 }
 
 stringBuilder.prototype.reset = function() {
-  this.buffer = '';
+  this.buffer = [];
 }
 
 stringBuilder.prototype.complete = function() {
-  return this.buffer;
+  return this.buffer.join('');
 };
 
 stringBuilder.prototype.pushStartToken = function(name) {
-  this.buffer += '<'+name+'>';
+  this.buffer.push('<');
+  this.buffer.push(name);
+  this.buffer.push('>');
 };
 
 stringBuilder.prototype.rewriteStartTokenAttributes = function(obj) {
   var attr = this._toAttr(obj);
-  this.buffer = this.buffer.slice(0, this.buffer.length-1) +' '+ attr + '>'
+  var last = this.buffer.pop();
+  if (last == '>') {
+    this.buffer.push(' ');
+    this.buffer.push(attr);
+    this.buffer.push('>');
+  } else {
+    throw new Error('Attempted to rewrite tag with attributes when there was no tag');
+  }
 };
 
 stringBuilder.prototype.pushEndToken = function(name) {
-  this.buffer += '</'+name+'>';
+  this.buffer.push('</');
+  this.buffer.push(name);
+  this.buffer.push('>');
 };
 
 stringBuilder.prototype.pushSingleToken = function(name) {
-  this.buffer += '<'+name+' />';
+  this.buffer.push('<');
+  this.buffer.push(name);
+  this.buffer.push(' />');
 };
 
+var merge = function(dest, source) {
+  for (prop in source) {
+    if (source.hasOwnProperty(prop)) {
+      if (prop != 'data') {
+        obj[prop] = source[prop];
+      } else { //merge data, too, ignore all else
+        obj[prop] = merge(obj[prop] || {}, source[prop]);
+      }
+    }
+  }
+}
+
 stringBuilder.prototype.rewriteSingleTokenAttributes = function(obj) {
-  var attr = this._toAttr(obj);
-  this.buffer = this.buffer.slice(0,this.buffer.length-3);
-  this.buffer += ' ' + attr + ' />';
+  var third = this.buffer[this.buffer.length-3];
+  if (third === ' ') { //Attrs already exist on tag, get previous and overwrite any duplicates
+    var newobj = merge(third.original, obj);
+    var attr = this._toAttr(newobj);
+    this.buffer[this.buffer.length-3] = attr;
+  } else {
+    var attr = this._toAttr(obj);
+    attr.original = obj;
+    var last = this.buffer.pop();
+    if (last == ' />') {
+      this.buffer.push(' ');
+      this.buffer.push(attr);
+      this.buffer.push(' />');
+    } else {
+      throw new Error('Attempted to rewrite tag with attributes when there was no tag');
+    }
+  }
 };
 
 stringBuilder.prototype.pushRaw = function(str, noEscape) {
   if (noEscape) {
-    this.buffer += str;
+    this.buffer.push(str);
   } else {
-    this.buffer += escape(str).replace(/(?:\r\n|\r|\n)/g, '<br />');
+    this.buffer.push(escape(str));
   }
 };
+
+stringBuilder.prototype.addClass = function(name) {
+  //if the 3rd elem form the top is ' ', then attr already exists and we should add classes to that
+  var third = this.buffer[this.buffer.length-3];
+  var last = this.buffer.pop();
+  if (third === ' ') {
+    var oldattr = this.buffer.pop();
+    
+    var obj = oldattr.original;
+    
+    obj['class'] = ((obj['class'] ? obj['class']+' ' : '')+name);
+    var attr = this._toAttr(obj);
+    
+    this.buffer.push(attr);
+    this.buffer.push(last);
+  } else { //otherwise, insert an attr with the class
+    this.buffer.push(last);
+    if (last === '>') { //start
+      this.rewriteStartTokenAttributes({class: name});
+    } else if (last === ' />') { //single
+      this.rewriteSingleTokenAttributes({class: name});
+    } else {
+      throw new Error('Attempted to add a class to a tag when there was no closed tag');
+    }
+  }
+}
+
+stringBuilder.prototype.dropLastToken = function() {
+  this.buffer.pop();
+  this.buffer.pop();
+  this.buffer.pop();
+}
 
 var indicator = '$';
 var defaultScopeName = indicator+'scope';
@@ -66,11 +144,10 @@ function jshtmlProxy(builder) {
       scope = scopeName;
       scopeName = defaultScopeName;
     }
-    var alternator = false;
     return Proxy.create({ //TODO: Alternate implementation for the newer harmony proxy API supported by Firefox
-      getPropertyDescriptor: function(key, rec) {
-        return {
-          value: (function() {
+      getPropertyDescriptor: function(key) {return {value: true}}, //We are all the properties!
+      get: function(rec, key) {
+        return (function() {
             if (key === scopeName) {
               return scope; 
             }
@@ -83,26 +160,37 @@ function jshtmlProxy(builder) {
                 }
               }
             }
-            alternator = !alternator;
-            if (alternator) {
-              return; //Skip every other invocation - called twice for HasBinding and HasOwnBinding. Or something.
-            }
             if (key.slice(-1) === indicator) {
               builder.pushSingleToken(key.slice(0,key.length-1));
-              return function(obj) {
+              var classproxy = Proxy.createFunction({
+                get: function(rec, key) {
+                  builder.addClass(key);
+                  return classproxy;
+                }
+              },
+              function(obj) {
                 builder.rewriteSingleTokenAttributes(obj);
-              }
+                return classproxy;
+              });
+              return classproxy;
             } else if (key.slice(0,1) === indicator) {
               builder.pushEndToken(key.slice(1));
-            } else {
+              return;
+            }  else {
               builder.pushStartToken(key);
-              return function(obj) {
+              var classproxy = Proxy.createFunction({
+                get: function(rec, key) {
+                  builder.addClass(key);
+                  return classproxy;
+                }
+              },
+              function(obj) {
                 builder.rewriteStartTokenAttributes(obj);
-              }
+                return classproxy;
+              });
+              return classproxy;
             }
-          })(), 
-          configurable: true
-        }
+          })();
       }
     });
   };
@@ -121,13 +209,17 @@ function jshtmlProxy(builder) {
 var funcStringCache = {}; //Cache stringified functions for implied usage
 
 function prepareFunc(func, builder) { //Prepare an implied function for repeated use
-  funcStringCache[func] = funcStringCache[func] || ('with (proxy(scope)) {('+func.toString()+')() }');
+  funcStringCache[func] = funcStringCache[func] || ('with (proxy(scope)) { return ('+func.toString()+')(); }');
   
   return function(scope) {
     var scope = scope || {};
     var builder = builder || stringBuilder;
     var proxy = jshtmlProxy(new builder());
-    eval(funcStringCache[func]);
+    var ret = eval(funcStringCache[func]);
+    if (ret && typeof(ret.then) === 'function') { //looks like a promise. Let's use it why don't we?
+      ret.proxy = proxy;
+      return ret;
+    }
     return proxy.collect();
   }
 }
@@ -157,6 +249,15 @@ function renderPath(path, options, cb) {
     } catch (e) {
       err = e;
     }
+  }
+  if (ret && typeof(ret.then) === 'function') { //looks like a promise. Let's use it why don't we?
+    return ret.then(function(data) {
+      if (data) {
+        cb(err, data);
+      } else {
+        cb(err, ret.proxy.collect());
+      }
+    });
   }
   process.nextTick(function() {
     cb(err, ret);

@@ -62,8 +62,8 @@ describe('the not.js html dsl', function() {
     }
     context.collect().should.be.equal(
 '<html><head><meta title=\"not.js wat?\" /></head><body style=\"width: 100%;\"><p><h1 style=\"text-align: right;\">Title '+
-'text</h1>Paragraph content!!</p><hr /><p>Unescaped html <strong> and such. </strong></p><p>              Or long form<br'+
-' />              for all the content.</p><p>I&#39;m number 0!</p><p>I&#39;m number 1!</p><p>I&#39;m number 2!</p><p>I&#3'+
+'text</h1>Paragraph content!!</p><hr /><p>Unescaped html <strong> and such. </strong></p><p>              Or long form\n'+
+'              for all the content.</p><p>I&#39;m number 0!</p><p>I&#39;m number 1!</p><p>I&#39;m number 2!</p><p>I&#3'+
 '9;m number 3!</p><h1>Sublayout title!</h1><ul class=\"un-list\"><li>Item: Foo</li><li>Item: Bar</li><li>Item: Baz</li><li>Item'+
 ': Bat</li></ul><h1>Sublayout title!</h1><ul class=\"un-list\"><li>Item: Foo</li><li>Item: Bar</li><li>Item: Baz</li><li>Item: Bat</li></ul></body></html>'
     );
@@ -75,7 +75,7 @@ describe('the not.js html dsl', function() {
     };
     var block = function() {
       html
-        body
+        body({meh: 'yes'}).content.full({data: {subheader: 'thing'}}) //You can chain classes and call he attr maker multiple times
           $($scope.content)
         $body
       $html
@@ -83,7 +83,7 @@ describe('the not.js html dsl', function() {
     
     var str = notjs.renderFunc(block, scope); //Takes a builder as a 3rd argument, defaults to string
     
-    str.should.be.equal('<html><body>'+scope.content+'</body></html>');
+    str.should.be.equal('<html><body meh="yes" class="content full" data-subheader="thing">'+scope.content+'</body></html>');
   });
   
   it('can render a path a la express middleware', function(done) {

@@ -20,7 +20,8 @@
   },
   "devDependencies": {
     "mocha": "~1.21",
-    "chai": "~1.9"
+    "chai": "~1.9",
+    "promise": "~5.0.0"
   },
   "engines": {
     "node": "~0.10"

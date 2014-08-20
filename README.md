@@ -12,19 +12,19 @@ Usage
 The tests are a great place to look, but here's the gist of it:
 `implied.not.js`:
 ```js
-module.exports = function() {
-  h1; $($scope.title); $h1
-  ul({class: 'un-list'})
+module.exports = function() { //Export a plain js function
+  h1; $($scope.title); $h1 //Write your tags, seperated by semicolons if on the same line
+  ul({class: 'un-list'}) //Pass attributes by calling the tag
   for ($scope.scratch in $scope.items) {
-    if ($scope.items.hasOwnProperty($scope.scratch)) {
+    if ($scope.items.hasOwnProperty($scope.scratch)) { //Do logic wherever
     
-      li
-        $('Item: '+$scope.items[$scope.scratch])
+      li.item //Chain classes off tags
+        $('Item: '+$scope.items[$scope.scratch]) //Write text nodes with $
       $li
       
     }
   }
-  $ul
+  $ul //Write close nodes by ending the tag with a $
 };
 ```
 You'll notice that virtually nothing in that function is defined within that file. How is this still valid, you ask? 
@@ -83,7 +83,7 @@ The implied context by default is nice, however, that means the following silly 
 ```js
 var http = require('http');
 module.exports = function() {
-    http.get('www.github.com', function(cli) {
+    http.get('http://www.github.com', function(cli) {
         var sink = '';
         cli.on('data', function(data) {
             sink += data;
@@ -118,7 +118,7 @@ module.exports = function(scope) {
   var context = notjs.create();
 
   var promise = new Promise(function(resolve, reject) {
-    http.get('www.github.com', function(cli) {
+    http.get('http://www.github.com', function(cli) {
       var sink = '';
       cli.on('data', function(data) {
         sink += data;
@@ -146,7 +146,7 @@ module.exports = function(scope) {
     });
   });
 
-  return Promise.race(promise);
+  return promise; //For your convenience, the renderPath function will handle promises
 };
 ```
 
@@ -191,7 +191,7 @@ module.exports = function() {
     });
   });
     
-  return $scope.Promise.race($scope.promise)
+  return $scope.promise
 };
 ```
 
@@ -203,3 +203,10 @@ module.exports = function() {
 in your standard `node` v0.10 installation with the `--harmony` flag enabled. Currently, it only has an implementation 
 for the `node` v0.10 proxy implementation (which is based on an older version of the spec), but another based on the
 new Proxy spec (available now in your local Firefox instance) will be available soon (tm).
+
+TODO
+====
+Doctype shorthand?
+Shorthand for inlining a script (something shorter than `script({type: 'text/javascript'}); $($scope.func.toString(), true); script`)
+Figure out how to fix 'var' within the dsl sensibly. Likely involves some metatrickery with the correct flow of calls through the proxy object chain (just overriding `get` hasn't worked, in my experience). It's complicated by variable hoisting.
+Benchmarks?

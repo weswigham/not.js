@@ -39,11 +39,16 @@ on the tag. The `$` function acts as a text node - strings you pass are escaped.
 with a comment inside it, which will be interpreted as a multiline string. Passing 'true' as the second argument
 disables escaping. Multiple tags can go on one line if separated by a semicolon.
 
+Classes
+-------
+Chaining off a tag or a called tag will result in classes being added to that tag. 
+`div({class="col-md-6"}).content.main` -> `<div class="col-md-6 content main">`
+
 Logic
 -----
 Just write javascript. Really; write _any_ javascript inline with your markup and it just works (tm). 
 
-Known exceptions:
+Known exceptions to 'just working':
 `var` statements do bad things (like write tags), since they try to bind to the context. As a workaround (until I start 
 using the new Proxy API - _and_ `node` supports the new Proxy API), store all scratch variables on $scope (if you're 
 using an explicit context, you can pass a different identifier as the first argument to the context-generator, 
@@ -130,7 +135,7 @@ module.exports = function(scope) {
       });
       cli.on('error', function(e) {
         scope.error = JSON.parse(e);
-        with (context(scope)) { //Make a context
+        with (context(scope)) { //Make a context - you may invoke this multiple times (and with different contexts)
           html
             head
               meta({title: $scope.error})
@@ -141,7 +146,8 @@ module.exports = function(scope) {
           $html
         }
 
-        resolve(context.collect());
+        resolve(context.collect()); //The total results are returned when .collect() is called 
+                                    //(and can be reset with a call to .restart())
       });
     });
   });
@@ -150,8 +156,9 @@ module.exports = function(scope) {
 };
 ```
 
-_The result object is built synchronously. Do. Not. Mix. In. Async. Calls._ You will likely have experience unexpected results. 
-Use promises or the like to execute somewhat synchronously and predictably.
+The result object is built as tags appear. _Do. Not. Mix. Async. Calls. With. Sync. Calls._ You will likely have experience 
+unexpected results, as the templates build apparently random orders. Use promise chaining or the like to execute 
+chunks of async template somewhat predictably.
 
 Doing the same thing with a lot of things in the scope object but still within an implied context:
 Scope object passed in the options object:
@@ -191,7 +198,11 @@ module.exports = function() {
     });
   });
     
-  return $scope.promise
+  return $scope.promise //Implied functions that return promises have their .proxy attribute
+                        //set to the proxy generated for them - call .collect() on the proxy
+                        //to get the result string when the promise resolves
+                        //eg. promise.then(function() { return promise.proxy.collect(); })
+                        //    .then(function(rendered) {doStuff(rendered);});
 };
 ```
 

@@ -15,11 +15,11 @@ The tests are a great place to look, but here's the gist of it:
 module.exports = function() { //Export a plain js function
   h1; $($scope.title); $h1 //Write your tags, seperated by semicolons if on the same line
   ul({class: 'un-list'}) //Pass attributes by calling the tag
-  for ($scope.scratch in $scope.items) {
-    if ($scope.items.hasOwnProperty($scope.scratch)) { //Do logic wherever
+  for (var scratch in $scope.items) {
+    if ($scope.items.hasOwnProperty(scratch)) { //Do logic wherever
     
       li.item //Chain classes off tags
-        $('Item: '+$scope.items[$scope.scratch]) //Write text nodes with $
+        $('Item: '+$scope.items[scratch]) //Write text nodes with $
       $li
       
     }

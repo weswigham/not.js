@@ -144,7 +144,7 @@ function jshtmlProxy(builder) {
       scope = scopeName;
       scopeName = defaultScopeName;
     }
-    return Proxy.create({ //TODO: Alternate implementation for the newer harmony proxy API supported by Firefox
+    var proxy = Proxy.createFunction({ //TODO: Alternate implementation for the newer harmony proxy API supported by Firefox
       getPropertyDescriptor: function(key) {return {value: true}}, //We are all the properties!
       get: function(rec, key) {
         return (function() {
@@ -152,13 +152,7 @@ function jshtmlProxy(builder) {
               return scope; 
             }
             if (key === indicator) {
-              return function(str, noEscape) {
-                if (typeof(str) === 'function') {
-                  builder.pushRaw((/\/\*!?(?:\@preserve)?[ \t]*(?:\r\n|\n)([\s\S]*?)(?:\r\n|\n)\s*\*\//).exec(str.toString())[1], noEscape);
-                } else {
-                  builder.pushRaw(str, noEscape);
-                }
-              }
+              return proxy;
             }
             if (key.slice(-1) === indicator) {
               builder.pushSingleToken(key.slice(0,key.length-1));
@@ -192,7 +186,15 @@ function jshtmlProxy(builder) {
             }
           })();
       }
+    }, function(str, noEscape) {
+      if (typeof(str) === 'function') {
+        builder.pushRaw((/\/\*!?(?:\@preserve)?[ \t]*(?:\r\n|\n)([\s\S]*?)(?:\r\n|\n)\s*\*\//).exec(str.toString())[1], noEscape);
+      } else {
+        builder.pushRaw(str, noEscape);
+      }
     });
+    
+    return proxy;
   };
   
   ret.collect = function() {
@@ -209,7 +211,7 @@ function jshtmlProxy(builder) {
 var funcStringCache = {}; //Cache stringified functions for implied usage
 
 function prepareFunc(func, builder) { //Prepare an implied function for repeated use
-  funcStringCache[func] = funcStringCache[func] || ('with (proxy(scope)) { return ('+func.toString()+')(); }');
+  funcStringCache[func] = funcStringCache[func] || ('(function() { with (proxy(scope)) { return ('+func.toString()+')('+defaultScopeName+'); } })()');
   
   return function(scope) {
     var scope = scope || {};

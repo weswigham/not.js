@@ -74,16 +74,19 @@ describe('the second functional example in the readme', function() {
 });
 
 describe('the third functional example in the readme', function() {
-  it('should run and produce correct html', function() {
+  it('should run and produce correct html', function(done) {
+    this.timeout(5000);
+    
     var implicitExample = function() {
       $scope.promise = new $scope.Promise(function(resolve, reject) {
-        $scope.http.get('www.github.com', function(cli) {
+        $scope.http.get('http://www.github.com', function(cli) {
           $scope.sink = '';
           cli.on('data', function(data) {
               $scope.sink += data;
           });
           cli.on('end', function() {
-              $(sink, true);
+              $($scope.sink, true);
+              $scope.log('Wrote result.')
               resolve(); //The return value of implied functions isn't actually used
           });
           cli.on('error', function(e) {
@@ -101,13 +104,19 @@ describe('the third functional example in the readme', function() {
         });
       });
       
-    return $scope.promise
+      return $scope.promise;
     };
   
-    var notjs.renderFunc(implicitExample, {
+    var result = notjs.renderFunc(implicitExample, {
       Promise: require('promise'),
       http: require('http'),
+      log: console.log,
       JSON: JSON
+    });
+    result.then(function() {
+      var data = result.proxy.collect();
+      data.should.not.be.null; //I just realized that testing 'should look like the github homepage' is hard
+      done();
     });
   });
 });

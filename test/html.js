@@ -99,4 +99,24 @@ describe('the not.js html dsl', function() {
       done();
     });
   });
+  
+  it('has syntax to allow for arbitrary tags and classes not usually valid as js', function() {
+    var block = function() {
+      $['ng-directive']['col-md-6']['some-class']
+        $['fb:like']({show_faces: "false"}); $('Like us!'); $['$fb:like']
+      $['$ng-directive']
+    };
+    
+    var result = notjs.renderFunc(block);
+    result.should.be.equal('<ng-directive class="col-md-6 some-class"><fb:like show_faces="false">Like us!</fb:like></ng-directive>');
+  });
+  
+  it('lets you alias the scope in implied arguments by taking an argument', function() {
+    var block = function(s) {
+      h1; $('text: '); $(s.text); $h1;
+    };
+    
+    var result = notjs.renderFunc(block, {text: 'some text'});
+    result.should.be.equal('<h1>text: some text</h1>');
+  });
 });

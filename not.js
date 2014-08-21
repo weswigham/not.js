@@ -170,7 +170,7 @@ function jshtmlProxy(builder) {
       scopeName = defaultScopeName;
     }
     var proxy = Proxy.createFunction({ //TODO: Alternate implementation for the newer harmony proxy API supported by Firefox
-      getPropertyDescriptor: function(key) {return {value: true}}, //We are all the properties!
+      getPropertyDescriptor: function(key) {return {value: true, configurable: true}}, //We are all the properties!
       get: function(rec, key) {
         return (function() {
             if (key === scopeName) {

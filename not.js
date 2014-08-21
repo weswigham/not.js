@@ -1,5 +1,30 @@
-var escape = require('escape-html');
+var load = function (name, definition){
+  if (typeof(module) !== 'undefined' && module.exports) { // Node.js
+    module.exports = definition(require('escape-html'));
+  } else {
+    var escapeHtml = function (str) {
+      var div = document.createElement('div');
+      div.appendChild(document.createTextNode(str));
+      return div.innerHTML;
+    };
 
+    if (typeof define === 'function'){ // AMD
+      define(function() { return definition(escapeHtml) });
+    } else { // Browser
+
+      var notjs = definition(escapeHtml);
+      var global = this;
+      var old = global[name];
+      notjs.noConflict = function () {
+        global[name] = old;
+        return notjs;
+      };
+      global[name] = notjs;
+    }
+  }
+};
+
+load('notjs', function(escape) {
 function stringBuilder() {
   this.buffer = [];
 };
@@ -266,7 +291,7 @@ function renderPath(path, options, cb) {
   });
 }
 
-module.exports = {
+var exposed = {
   string: stringBuilder, //TODO: More output format builders, eg DOM Objects, Buffer
   create: function(builder) {
     return jshtmlProxy((builder && new builder()) || new stringBuilder());
@@ -276,3 +301,7 @@ module.exports = {
   renderPath: renderPath,
   __express: renderPath
 };
+
+return exposed;
+
+});

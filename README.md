@@ -155,9 +155,9 @@ module.exports = function(scope) {
 };
 ```
 
-The result object is built as tags appear. _Do. Not. Mix. Async. Calls. With. Sync. Calls._ You will likely have experience 
-unexpected results, as the templates build apparently random orders. Use promise chaining or the like to execute 
-chunks of async template somewhat predictably.
+The result object is built as tags appear. Don't mix async and sync calls - The template will probably 
+build in an unexplected order. Use promise chaining or the like to execute chunks of async template in
+a known order.
 
 Doing the same thing with a lot of things in the scope object but still within an implied context:
 Scope object passed in the options object:
@@ -217,5 +217,9 @@ new Proxy spec (available now in your local Firefox instance) will be available 
 TODO
 ====
 Doctype shorthand?
+
 Shorthand for inlining a script (something shorter than `script({type: 'text/javascript'}); $($scope.func.toString(), true); script`)
+
 Benchmarks?
+
+`gh-pages` branch written with `not.js`.

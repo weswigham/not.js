@@ -14,10 +14,11 @@ describe('the not.js html dsl', function() {
         items: ['Foo', 'Bar', 'Baz', 'Bat']
       }
     };
+    
     //Call the context with the name you want the scope accessible by and the scope object itself
     //"$scope" is the default and may be omitted
     with (context('$scope', scope)) {
-    
+      (function() { //Make a closure so we can use locals
       //Any valid identifier is a used as a tag (with some exceptions, see below)
       html
         head
@@ -47,9 +48,9 @@ describe('the not.js html dsl', function() {
           $p
           
           //Include plain js logic inline with your template!
-          for ($scope.i=0; $scope.i<4; $scope.i++) {
+          for (var i=0; i<4; i++) {
             p
-              $('I\'m number '+$scope.i+'!');
+              $('I\'m number '+i+'!');
             $p
           }
           
@@ -59,6 +60,7 @@ describe('the not.js html dsl', function() {
           $($scope.impliedContext($scope.sublayout), true)
         $body
       $html
+      })();
     }
     context.collect().should.be.equal(
 '<html><head><meta title=\"not.js wat?\" /></head><body style=\"width: 100%;\"><p><h1 style=\"text-align: right;\">Title '+
@@ -95,7 +97,7 @@ describe('the not.js html dsl', function() {
     var path = require('path').resolve('test', 'implied.not.js');
     notjs.renderPath(path, {scope: scope}, function(err, res) {
       if (err) throw err;
-      res.should.be.equal('<h1>Title!</h1><ul class=\"un-list\"><li>Item: Foo</li><li>Item: Bar</li><li>Item: Baz</li><li>Item: Bat</li></ul>');
+      res.should.be.equal('<h1>Title!</h1><ul class="un-list"><li>Item: Foo</li><li>Item: Bar</li><li>Item: Baz</li><li>Item: Bat</li></ul>');
       done();
     });
   });
@@ -114,9 +116,13 @@ describe('the not.js html dsl', function() {
   it('lets you alias the scope in implied arguments by taking an argument', function() {
     var block = function(s) {
       h1; $('text: '); $(s.text); $h1;
+      
+      var example = 'thing';
+      example += ' and more';
+      h2; $(example); $h2;
     };
     
     var result = notjs.renderFunc(block, {text: 'some text'});
-    result.should.be.equal('<h1>text: some text</h1>');
+    result.should.be.equal('<h1>text: some text</h1><h2>thing and more</h2>');
   });
 });

@@ -49,10 +49,9 @@ Logic
 Just write javascript. Really; write _any_ javascript inline with your markup and it just works (tm). 
 
 Known exceptions to 'just working':
-`var` statements do bad things (like write tags), since they try to bind to the context. As a workaround (until I start 
-using the new Proxy API - _and_ `node` supports the new Proxy API), store all scratch variables on $scope (if you're 
-using an explicit context, you can pass a different identifier as the first argument to the context-generator, 
-if $scope is too long/misleading for you).
+`var` statements don't function immediately within an explicitly defined context. 
+Make an IIFE within the explicit with (like in the first test) to get around the problem, 
+or use implied contexts. Or don't use locals.
 
 Scope
 -------
@@ -109,7 +108,7 @@ module.exports = function() {
     });
 };
 ```
-Since `http` (and `sink`, and `JSON`) will be overridden by the implicit context. You have two options: 
+Since `http` (and `JSON`) will be overridden by the implicit context. You have two options: 
 - Export the desired functions into the `$scope`
 - Utilize _explicit contexts_ for complicated files
 
@@ -173,24 +172,24 @@ Scope object passed in the options object:
 `not.js` File:
 ```js
 module.exports = function() {
-  $scope.promise = new $scope.Promise(function(resolve, reject) {
-    $scope.http.get('www.github.com', function(cli) {
-      $scope.sink = '';
+  var promise = new $scope.Promise(function(resolve, reject) {
+    $scope.http.get('http://www.github.com', function(cli) {
+      var sink = '';
       cli.on('data', function(data) {
-          $scope.sink += data;
+          sink += data;
       });
       cli.on('end', function() {
           $(sink, true);
           resolve(); //The return value of implied functions isn't actually used
       });
       cli.on('error', function(e) {
-        $scope.error = $scope.JSON.parse(e);
+        var error = $scope.JSON.parse(e);
         html
           head
-            meta({title: $scope.error})
+            meta({title: error})
           $head
           body
-            $($scope.error);
+            $(error);
           $body
         $html
         resolve();
@@ -198,11 +197,11 @@ module.exports = function() {
     });
   });
     
-  return $scope.promise //Implied functions that return promises have their .proxy attribute
-                        //set to the proxy generated for them - call .collect() on the proxy
-                        //to get the result string when the promise resolves
-                        //eg. promise.then(function() { return promise.proxy.collect(); })
-                        //    .then(function(rendered) {doStuff(rendered);});
+  return promise; //Implied functions that return promises have their .proxy attribute
+                  //set to the proxy generated for them - call .collect() on the proxy
+                  //to get the result string when the promise resolves
+                  //eg. promise.then(function() { return promise.proxy.collect(); })
+                  //    .then(function(rendered) {doStuff(rendered);});
 };
 ```
 
@@ -219,5 +218,4 @@ TODO
 ====
 Doctype shorthand?
 Shorthand for inlining a script (something shorter than `script({type: 'text/javascript'}); $($scope.func.toString(), true); script`)
-Figure out how to fix 'var' within the dsl sensibly. Likely involves some metatrickery with the correct flow of calls through the proxy object chain (just overriding `get` hasn't worked, in my experience). It's complicated by variable hoisting.
 Benchmarks?

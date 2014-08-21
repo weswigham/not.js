@@ -77,35 +77,34 @@ describe('the third functional example in the readme', function() {
   it('should run and produce correct html', function(done) {
     this.timeout(5000);
     
-    var implicitExample = function() {
-      $scope.promise = new $scope.Promise(function(resolve, reject) {
-        $scope.http.get('http://www.github.com', function(cli) {
-          $scope.sink = '';
-          cli.on('data', function(data) {
-              $scope.sink += data;
-          });
-          cli.on('end', function() {
-              $($scope.sink, true);
-              $scope.log('Wrote result.')
-              resolve(); //The return value of implied functions isn't actually used
-          });
-          cli.on('error', function(e) {
-            $scope.error = $scope.JSON.parse(e);
-            html
-              head
-                meta({title: $scope.error})
-              $head
-              body
-                $($scope.error);
-              $body
-            $html
-            resolve();
-          });
+  var implicitExample = function() {
+    var promise = new $scope.Promise(function(resolve, reject) {
+      $scope.http.get('http://www.github.com', function(cli) {
+        var sink = '';
+        cli.on('data', function(data) {
+            sink += data;
+        });
+        cli.on('end', function() {
+            $(sink, true);
+            resolve(); //The return value of implied functions isn't actually used
+        });
+        cli.on('error', function(e) {
+          var error = $scope.JSON.parse(e);
+          html
+            head
+              meta({title: error})
+            $head
+            body
+              $(error);
+            $body
+          $html
+          resolve();
         });
       });
+    });
       
-      return $scope.promise;
-    };
+    return promise;
+  };
   
     var result = notjs.renderFunc(implicitExample, {
       Promise: require('promise'),

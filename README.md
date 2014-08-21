@@ -1,4 +1,4 @@
-`not.js`
+`not.js` [![Build Status](https://travis-ci.org/weswigham/not.js.svg?branch=master)](https://travis-ci.org/weswigham/not.js)
 =======
 
 `not.js` is a [DSL](http://en.wikipedia.org/wiki/Domain-specific_language) written in javascript, 

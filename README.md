@@ -81,6 +81,61 @@ Valid options are:
 }
 ```
 
+Shortcuts
+---------
+There are some convenient shortcuts builtin for things the usual syntax makes awkward:
+
+```js
+$(notjs.renderPathSync(path, $scope), true)
+```
+as
+```js
+- include(path)
+```
+This will directly include the template at the path in question at that 
+point in this template, using the current scope object. It does not support
+asynchronously resolving templates.
+
+
+```js
+$('<!DOCTYPE '+value+'>', true)
+```
+as
+```js
+- doctype(value)
+```
+Just a shorthand for writing out a doctype.
+
+```js
+script({src: value}); $script;
+```
+as
+```js
+- script(value)
+```
+A shorthand for writing out a standard script tag.
+
+```js
+$('<!-- ', true);
+<tags as normal>
+$(' -->', true);
+```
+as
+```js
+- comment
+<tags as normal>
+- $comment
+```
+A shorthand for using html comments, if you need to template those for some reason.
+
+The general form is `- <shortcut>[(<args>)]`. The `-` is the unary minus operator - 
+if automatic semicolon insertion fails you (and it will), end the prior line with a 
+semicolon by hand to ensure it is interpreted as unary minus. If you fail to do so, 
+the interpreter has a penchant of doing things out of the order you anticipated, 
+yielding unexpected results. Additionally, the `~` and `+` unary operator should function 
+identically - so `- comment` and `~comment` should _both_ be acceptable. Use whatever
+operator suits your preference, but I recommend you at least stay consistent.
+
 Suggestions for ease of use
 ===========================
 The implied context by default is nice, however, that means the following silly example does not function:

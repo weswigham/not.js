@@ -45,6 +45,26 @@ describe('document writing shortcuts', function() {
       var res = notjs.renderFunc(content);
       res.should.be.equal('<html><head><script src="/a/script"></script></head></html>');
     });
+    
+    it('inserts a acript tag using other unary operators', function() {
+      var content = function() {
+        html
+          head;
+            +script('/b/script');
+            ~script('/c/script');
+            // !script('/a/script'); //Causes really odd output due to type coercions, as do the following
+            //void script('/d/script'); //why would you ever want to do this
+            //typeof script('/e/script'); //or this
+            //delete script('/f/script'); //~wat~
+          $head
+        $html
+      }
+      
+      var res = notjs.renderFunc(content);
+      res.should.be.equal('<html><head><script src="/b/script">'+
+      '</script><script src="/c/script">'+
+      '</script></head></html>');
+    });
   });
   
   describe('the include shortcut', function() {

@@ -85,6 +85,7 @@ Shortcuts
 ---------
 There are some convenient shortcuts builtin for things the usual syntax makes awkward:
 
+### -include
 ```js
 $(notjs.renderPathSync(path, $scope), true)
 ```
@@ -96,7 +97,42 @@ This will directly include the template at the path in question at that
 point in this template, using the current scope object. It does not support
 asynchronously resolving templates.
 
+### -render
+```js
+$(notjs.renderFunc(func, $scope), true)
+```
+as
+```js
+- render(func)
+```
+Renders a function into the current output using the current scope.
 
+### -using
+```js
+- using(name)
+```
+This has no simple translations. Any content following the `using`, rather than 
+being written to the output buffer, is written to `$scope[name]`. It's useful 
+for making a layout or placeholder based structure, enabling things like
+```js
+-using('headers')
+title; $('Whatever'); title;
+
+-using('body')
+div.container
+  h1; $('Content area'); $h1
+$div
+
+-include('/layouts/main.not.js') //Where the included template inserts $scope.headers and $scope.body
+```
+
+### -done
+```js
+- done
+```
+A `- using` and a `-include` both implicitly call a `- done` internally. `- done` signals the end of a using block.
+
+### -doctype
 ```js
 $('<!DOCTYPE '+value+'>', true)
 ```
@@ -106,6 +142,7 @@ as
 ```
 Just a shorthand for writing out a doctype.
 
+### -script
 ```js
 script({src: value}); $script;
 ```
@@ -115,6 +152,7 @@ as
 ```
 A shorthand for writing out a standard script tag.
 
+### -comment
 ```js
 $('<!-- ', true);
 <tags as normal>

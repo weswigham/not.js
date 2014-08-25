@@ -192,6 +192,7 @@ shortcuts['script'] = function(builder, scope, args) {
 }
 
 shortcuts['include'] = function(builder, scope, args) {
+  shortcuts['done'](builder, scope, args);
   var result = require(args[0]);
   var res = renderFunction(result, scope, new builder.constructor());
   if (typeof(res) == 'function') {
@@ -200,6 +201,39 @@ shortcuts['include'] = function(builder, scope, args) {
   builder.pushRaw(res, true);
 }
 
+shortcuts['render'] = function(builder, scope, args) {
+  var res = renderFunction(args[0], scope, new builder.constructor());
+  if (typeof(res) == 'function') {
+    throw new Error('Attempted to render an asynchronous template. Please handle this without the shortcut.');
+  }
+  builder.pushRaw(res, true);
+}
+
+shortcuts['using'] = function(builder, scope, args) {
+  shortcuts['done'](builder, scope, args);
+  var name = args[0];
+  Object.defineProperty(scope, name, {
+    get: function() {
+      return builder.complete();
+    },
+    configurable: true
+  });
+  builder.section = name;
+}
+
+shortcuts['done'] = function(builder, scope, args) {
+  if (builder.section) { //'lock in' any in progress 'using's
+    var completed = builder.complete();
+    Object.defineProperty(scope, builder.section, {
+      get: function() {
+        return completed;
+      },
+      configurable: true
+    });
+    builder.reset();
+    builder.section = null;
+  }
+}
 
 
 function jshtmlProxy(builder) {
@@ -235,9 +269,13 @@ function jshtmlProxy(builder) {
               builder.pushEndToken(key.slice(1));
               return {
                 valueOf: function() {
-                  var args = builder.dropLastToken();
-                  
-                  shortcuts[key](builder, scope, args);
+                  if (shortcuts.hasOwnProperty(key)) {
+                    var args = builder.dropLastToken();
+                    
+                    shortcuts[key](builder, scope, args);
+                  } else {
+                    throw new Error('Attempted to call nonexistant shortcut');
+                  }
                   return 0;
                 }
               }
@@ -246,10 +284,13 @@ function jshtmlProxy(builder) {
               var classproxy = Proxy.createFunction({
                 get: function(rec, nkey) {
                   if (nkey === 'valueOf') {
-                    var args = builder.dropLastToken();
-                    
-                    shortcuts[key](builder, scope, args);
-                    
+                    if (shortcuts.hasOwnProperty(key)) {
+                      var args = builder.dropLastToken();
+                      
+                      shortcuts[key](builder, scope, args);
+                    } else {
+                      throw new Error('Attempted to call nonexistant shortcut');
+                    }
                     return function() {return 0};
                   }
                   builder.addClass(nkey);

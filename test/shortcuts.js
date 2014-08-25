@@ -19,6 +19,73 @@ describe('document writing shortcuts', function() {
     });
   });
   
+  describe('the render shortcut', function() {
+    it('renders a function into the active one', function() {
+      var content = function() {
+        var factory = function(num) {
+          if (num % 2 === 0) {
+            return function() {
+              li; $($scope.label+' '+$scope.number); $li
+            }
+          } else {
+            return function() {
+              li; $($scope.number); $li
+            }
+          }
+        }
+        
+        ul
+        for (var i=0; i<3; i++) {
+          $scope.number = i;
+          -render(factory(i))
+        }
+        $ul
+      }
+      
+      var res = notjs.renderFunc(content, {label: 'Number:'});
+      res.should.be.equal('<ul><li>Number: 0</li><li>1</li><li>Number: 2</li></ul>');
+    });
+  });
+  
+  describe('the using shortcut', function() {
+    it('writes to `$scope[name]`', function() {
+      var content = function() {
+        - using('headers');
+        title; $('Whatever'); $title;
+
+        - using('body');
+        div.container
+          h1; $('Content area'); $h1
+        $div;
+
+        - include('./test/layout.not.js');
+      }
+      
+      var res = notjs.renderFunc(content);
+      res.should.be.equal('<html><head><title>Whatever</title></head><body><div class="container"><h1>Content area</h1></div></body></html>');
+    });
+  });
+  
+  describe('the done shortcut', function() {
+    it('closes the current using block', function() {
+      var content = function() {
+        - using('headers');
+        title; $('Whatever'); $title;
+        - using('scripts');
+          -script('/abc/script')
+        - done
+        
+        head
+          $($scope.headers, true)
+          $($scope.scripts, true)
+        $head
+      }
+      
+      var res = notjs.renderFunc(content);
+      res.should.be.equal('<head><title>Whatever</title><script src="/abc/script"></script></head>');
+    });
+  });
+  
   describe('the doctype shortcut', function() {
     it('inserts a doctype tag', function() {
       var content = function() {

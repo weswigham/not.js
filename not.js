@@ -46,7 +46,8 @@ stringBuilder.prototype._toAttr = function(obj) {
   }
   
   var str = new String(ret.join(' ')); //Wrap with 'String' so it has methods/properties
-  str.original = obj;
+  str.original = obj; //for rewriting attr
+  str.arguments = arguments; //for capturing for use in shortcuts
   return str;
 }
 
@@ -155,13 +156,51 @@ stringBuilder.prototype.addClass = function(name) {
 }
 
 stringBuilder.prototype.dropLastToken = function() {
-  this.buffer.pop();
-  this.buffer.pop();
-  this.buffer.pop();
+var third = this.buffer[this.buffer.length-3];
+  if (third === ' ') { //Attrs already exist on tag
+    this.buffer.pop();
+    var attrs = this.buffer.pop();
+    this.buffer.pop();
+    this.buffer.pop();
+    this.buffer.pop();
+    return attrs.arguments;
+  } else {
+    this.buffer.pop();
+    this.buffer.pop();
+    this.buffer.pop();
+  }
 }
 
 var indicator = '$';
 var defaultScopeName = indicator+'scope';
+
+var shortcuts = {}
+shortcuts['comment'] = function(builder) {
+  builder.pushRaw('<!-- ', true);
+};
+
+shortcuts['$comment'] = function(builder) {
+  builder.pushRaw(' -->', true);
+};
+
+shortcuts['doctype'] = function(builder, scope, args) {
+  builder.pushRaw('<!DOCTYPE '+args[0]+'>', true);
+}
+
+shortcuts['script'] = function(builder, scope, args) {
+  builder.pushRaw('<script src="'+args[0]+'"></script>', true);
+}
+
+shortcuts['include'] = function(builder, scope, args) {
+  var result = require(args[0]);
+  var res = renderFunction(result, scope, new builder.constructor());
+  if (typeof(res) == 'function') {
+    throw new Error('Attempted to directly include an asynchronous template. Please handle this without the shortcut.');
+  }
+  builder.pushRaw(res, true);
+}
+
+
 
 function jshtmlProxy(builder) {
   var ret = function(scopeName, scope) {
@@ -194,12 +233,26 @@ function jshtmlProxy(builder) {
               return classproxy;
             } else if (key.slice(0,1) === indicator) {
               builder.pushEndToken(key.slice(1));
-              return;
+              return {
+                valueOf: function() {
+                  var args = builder.dropLastToken();
+                  
+                  shortcuts[key](builder, scope, args);
+                  return 0;
+                }
+              }
             }  else {
               builder.pushStartToken(key);
               var classproxy = Proxy.createFunction({
-                get: function(rec, key) {
-                  builder.addClass(key);
+                get: function(rec, nkey) {
+                  if (nkey === 'valueOf') {
+                    var args = builder.dropLastToken();
+                    
+                    shortcuts[key](builder, scope, args);
+                    
+                    return function() {return 0};
+                  }
+                  builder.addClass(nkey);
                   return classproxy;
                 }
               },

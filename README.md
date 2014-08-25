@@ -309,10 +309,6 @@ new Proxy spec (available now in your local Firefox instance) will be available 
 
 TODO
 ====
-Doctype shorthand?
-
-Shorthand for inlining a script (something shorter than `script({type: 'text/javascript'}); $($scope.func.toString(), true); script`)
-
 Benchmarks?
 
 `gh-pages` branch written with `not.js`.

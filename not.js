@@ -197,9 +197,9 @@ shortcuts['script'] = function(builder, scope, args) {
 shortcuts['include'] = function(builder, scope, args) {
   shortcuts['done'](builder, scope, args);
   var pathname = args[0];
-  if (this.basepath) {
+  if (builder.basepath) {
     var path = require('path');
-    pathname = path.join(basepath, pathname);
+    pathname = path.join(builder.basepath, pathname);
   }
   var result = require(pathname);
   var res = renderFunction(result, scope, new builder.constructor());

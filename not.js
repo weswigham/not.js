@@ -25,7 +25,10 @@ var load = function (name, definition){
 };
 
 load('notjs', function(escape) {
-function stringBuilder() {
+function stringBuilder(basepath) {
+  if (basepath) {
+    this.basepath = basepath;
+  }
   this.buffer = [];
 };
 
@@ -193,7 +196,12 @@ shortcuts['script'] = function(builder, scope, args) {
 
 shortcuts['include'] = function(builder, scope, args) {
   shortcuts['done'](builder, scope, args);
-  var result = require(args[0]);
+  var pathname = args[0];
+  if (this.basepath) {
+    var path = require('path');
+    pathname = path.join(basepath, pathname);
+  }
+  var result = require(pathname);
   var res = renderFunction(result, scope, new builder.constructor());
   if (typeof(res) == 'function') {
     throw new Error('Attempted to directly include an asynchronous template. Please handle this without the shortcut.');
@@ -329,13 +337,13 @@ function jshtmlProxy(builder) {
 
 var funcStringCache = {}; //Cache stringified functions for implied usage
 
-function prepareFunc(func, builder) { //Prepare an implied function for repeated use
+function prepareFunc(func, builder, basepath) { //Prepare an implied function for repeated use
   funcStringCache[func] = funcStringCache[func] || ('(function() { with (proxy(scope)) { return ('+func.toString()+')('+defaultScopeName+'); } })()');
   
   return function(scope) {
     var scope = scope || {};
     var builder = builder || stringBuilder;
-    var proxy = jshtmlProxy(new builder());
+    var proxy = jshtmlProxy(new builder(basepath));
     var ret = eval(funcStringCache[func]);
     if (ret && typeof(ret.then) === 'function') { //looks like a promise. Let's use it why don't we?
       ret.proxy = proxy;
@@ -345,17 +353,23 @@ function prepareFunc(func, builder) { //Prepare an implied function for repeated
   }
 }
 
-function renderFunction(func, scope, builder) { 
-  return prepareFunc(func, builder)(scope);
+function renderFunction(func, scope, builder, basepath) { 
+  return prepareFunc(func, builder, basepath)(scope);
 }
 
 function renderPath(path, options, cb) {
+  
   if (typeof(options) === 'function') {
     cb = options;
     options = {};
   }
   
   var func = require(path); //Yes.
+  if (!options.basepath) {
+    var pathlib = require('path');
+    var basepath = pathlib.dirname(pathlib.resolve(path));
+    options.basepath = basepath;
+  }
   var ret;
   var err;
   if (options.explicit) { //Assume implied use rather than explicit 'with' by default
@@ -366,7 +380,7 @@ function renderPath(path, options, cb) {
     }
   } else {
     try {
-      ret = renderFunction(func, options.scope, options.builder);
+      ret = renderFunction(func, options.scope, options.builder, options.basepath);
     } catch (e) {
       err = e;
     }

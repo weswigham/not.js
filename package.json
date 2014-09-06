@@ -1,7 +1,7 @@
 {
   "name": "not.js",
   "repository": "git://github.com/weswigham/not.js",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "license": "MIT",
   "description": "A simple, html template dsl.",
   "keywords": [

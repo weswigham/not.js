@@ -20,16 +20,16 @@ module.exports = function() {
       div['col-md-6']
         textarea({id: 'editor'})
           $(function() {/*
-  h1; $($scope.title); $h1
-  ul({class: 'un-list'})
-    for (var index in $scope.items) {
-      if ($scope.items.hasOwnProperty(index)) {
-        li
-          $('All the tags: '+$scope.items[index]);
-        $li
-      }
+h1; $($scope.title); $h1
+ul({class: 'un-list'})
+  for (var index in $scope.items) {
+    if ($scope.items.hasOwnProperty(index)) {
+      li
+        $('All the tags: '+$scope.items[index]);
+      $li
     }
-  $ul
+  }
+$ul
           */})
         $textarea
       $div

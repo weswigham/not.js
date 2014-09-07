@@ -212,7 +212,7 @@ shortcuts['include'] = function(builder, scope, args) {
 }
 
 shortcuts['render'] = function(builder, scope, args) {
-  var res = renderFunction(args[0], scope, builder.constructor, newbase);
+  var res = renderFunction(args[0], scope, builder.constructor, builder.basepath);
   if (typeof(res) == 'function') {
     throw new Error('Attempted to render an asynchronous template. Please handle this without the shortcut.');
   }

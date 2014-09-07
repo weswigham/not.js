@@ -1,71 +1,20 @@
-<!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Not.js by weswigham</title>
-
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-  </head>
-  <body>
-    <div class="wrapper">
-      <header>
-        <h1>Not.js</h1>
-        <p>A consice way of representing and creating html in javascript</p>
-
-        <p class="view"><a href="https://github.com/weswigham/not.js">View the Project on GitHub <small>weswigham/not.js</small></a></p>
-
-
-        <ul>
-          <li><a href="https://github.com/weswigham/not.js/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/weswigham/not.js/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/weswigham/not.js">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
-      <section>
-        <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
-
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
-
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
-
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
-
-<h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
-
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
-
-<h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
-
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
-
-<h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
-
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
-
-<h3>
-<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
-
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
-      </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/weswigham">weswigham</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
-      </footer>
-    </div>
-    <script src="javascripts/scale.fix.js"></script>
-    
-  </body>
-</html>
+<html><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="assets/lib/bootstrap/css/bootstrap.min.css"><link rel="stylesheet" href="assets/lib/bootstrap/css/bootstrap-theme.min.css"><link rel="stylesheet" href="assets/css/main.css"><link rel="stylesheet" href="assets/lib/codemirror/codemirror.css"><title>Not.js - Template DSL</title></head><body><nav class="navbar navbar-default" role="navigation"><div class="container-fluid"><div class="navbar-header"><button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#collapsing-bar"><span class="sr-only">Toggle-navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a class="navbar-brand" href="/">Not.js</a></div><div class="collapse navbar-collapse" id="collapsing-bar"><ul class="nav navbar-nav"><li class=""><a href="docs.html">Documentation</a></li><li class=""><a href="https://github.com/weswigham/not.js">Source</a></li></ul></div></div></nav><div class="container"><h2 class="text-center">It&#39;s all just javascript... but... not.</h2><div class="row liveedit"><div class="col-md-6"><textarea id="editor">  h1; $($scope.title); $h1
+  ul({class: &#39;un-list&#39;})
+    for (var index in $scope.items) {
+      if ($scope.items.hasOwnProperty(index)) {
+        li
+          $(&#39;All the tags: &#39;+$scope.items[index]);
+        $li
+      }
+    }
+  $ul</textarea></div><div class="col-md-6"><textarea id="result-html">&lt;h1&gt;It&#39;s javascript all the way down!&lt;/h1&gt;
+&lt;ul class=&quot;un-list&quot;&gt;
+  &lt;li&gt;All the tags: &amp;lt;html&amp;gt;
+  &lt;/li&gt;
+  &lt;li&gt;All the tags: &amp;lt;head&amp;gt;
+  &lt;/li&gt;
+  &lt;li&gt;All the tags: &amp;lt;body&amp;gt;
+  &lt;/li&gt;
+  &lt;li&gt;All the tags: &amp;lt;whatever&amp;gt;
+  &lt;/li&gt;
+&lt;/ul&gt;            </textarea></div></div><h6 class="text-center">Try viewing this page in firefox, then you can play with the code live!</h6></div><nav class="navbar navbar-default navbar-fixed-bottom" role="navigation"><div class="container"><p class="navbar-text">Not.js is maintained by <a href="http://ham.io">weswigham</a></p><p class="navbar-text navbar-right">Want more examples? Check out <a href="https://github.com/weswigham/not.js/tree/gh-pages">this site</a>!</p></div></nav><script src="https://code.jquery.com/jquery-2.1.1.min.js"></script><script src="assets/lib/bootstrap/js/bootstrap.min.js"></script><script src="assets/js/lib/not.js"></script><script src="assets/lib/codemirror/codemirror.js"></script><script src="assets/lib/codemirror/mode/javascript.js"></script><script src="assets/lib/codemirror/mode/xml.js"></script><script src="assets/lib/codemirror/mode/css.js"></script><script src="assets/lib/codemirror/mode/htmlmixed.js"></script><script src="assets/lib/codemirror/util/formatting.js"></script><script src="assets/js/index.js"></script></body></html>

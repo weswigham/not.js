@@ -1,0 +1,27 @@
+{
+  "name": "not.js-website",
+  "version": "0.0.1",
+  "description": "not.js repository website",
+  "repository": "http://github.com/weswigham/not.js",
+  "author": {
+    "name": "Wesley Wigham",
+    "email": "wwigham@gmail.com",
+    "url": "http://ham.io"
+  },
+  "private": true,
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "grunt-notjs": "~0.0.1",
+    "grunt": "~0.4.2",
+    "grunt-cli": "~0.1.13",
+    "grunt-contrib-watch": "~0.6.1"
+  },
+  "scripts": {
+    "build": "grunt build",
+    "harmonize": "grunt harmonize",
+    "watch": "grunt watch"
+  }
+}

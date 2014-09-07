@@ -36,7 +36,8 @@ $ul
       div['col-md-6']
         textarea({id: 'result-html'})
           $(function(){/*
-<h1>It's javascript all the way down!</h1>
+<h1>It's javascript all the way down!
+</h1>
 <ul class="un-list">
   <li>All the tags: &lt;html&gt;
   </li>

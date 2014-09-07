@@ -1,13 +1,14 @@
-<html><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="assets/lib/bootstrap/css/bootstrap.min.css"><link rel="stylesheet" href="assets/lib/bootstrap/css/bootstrap-theme.min.css"><link rel="stylesheet" href="assets/css/main.css"><link rel="stylesheet" href="assets/lib/codemirror/codemirror.css"><title>Not.js - Template DSL</title></head><body><nav class="navbar navbar-default" role="navigation"><div class="container-fluid"><div class="navbar-header"><button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#collapsing-bar"><span class="sr-only">Toggle-navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a class="navbar-brand" href="/">Not.js</a></div><div class="collapse navbar-collapse" id="collapsing-bar"><ul class="nav navbar-nav"><li class=""><a href="docs.html">Documentation</a></li><li class=""><a href="https://github.com/weswigham/not.js">Source</a></li></ul></div></div></nav><div class="container"><h2 class="text-center">It&#39;s all just javascript... but... not.</h2><div class="row liveedit"><div class="col-md-6"><textarea id="editor">  h1; $($scope.title); $h1
-  ul({class: &#39;un-list&#39;})
-    for (var index in $scope.items) {
-      if ($scope.items.hasOwnProperty(index)) {
-        li
-          $(&#39;All the tags: &#39;+$scope.items[index]);
-        $li
-      }
+<html><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="assets/lib/bootstrap/css/bootstrap.min.css"><link rel="stylesheet" href="assets/lib/bootstrap/css/bootstrap-theme.min.css"><link rel="stylesheet" href="assets/css/main.css"><link rel="stylesheet" href="assets/lib/codemirror/codemirror.css"><title>Not.js - Template DSL</title></head><body><nav class="navbar navbar-default" role="navigation"><div class="container-fluid"><div class="navbar-header"><button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#collapsing-bar"><span class="sr-only">Toggle-navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a class="navbar-brand" href="/not.js">Not.js</a></div><div class="collapse navbar-collapse" id="collapsing-bar"><ul class="nav navbar-nav"><li class=""><a href="docs.html">Documentation</a></li><li class=""><a href="https://github.com/weswigham/not.js">Source</a></li></ul></div></div></nav><div class="container"><h2 class="text-center">It&#39;s all just javascript... but... not.</h2><div class="row liveedit"><div class="col-md-6"><textarea id="editor">h1; $($scope.title); $h1
+ul({class: &#39;un-list&#39;})
+  for (var index in $scope.items) {
+    if ($scope.items.hasOwnProperty(index)) {
+      li
+        $(&#39;All the tags: &#39;+$scope.items[index]);
+      $li
     }
-  $ul</textarea></div><div class="col-md-6"><textarea id="result-html">&lt;h1&gt;It&#39;s javascript all the way down!&lt;/h1&gt;
+  }
+$ul</textarea></div><div class="col-md-6"><textarea id="result-html">&lt;h1&gt;It&#39;s javascript all the way down!
+&lt;/h1&gt;
 &lt;ul class=&quot;un-list&quot;&gt;
   &lt;li&gt;All the tags: &amp;lt;html&amp;gt;
   &lt;/li&gt;

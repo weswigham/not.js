@@ -197,12 +197,14 @@ shortcuts['script'] = function(builder, scope, args) {
 shortcuts['include'] = function(builder, scope, args) {
   shortcuts['done'](builder, scope, args);
   var pathname = args[0];
+  var newbase;
   if (builder.basepath) {
     var path = require('path');
     pathname = path.join(builder.basepath, pathname);
+    newbase = path.dirname(pathname);
   }
   var result = require(pathname);
-  var res = renderFunction(result, scope, new builder.constructor());
+  var res = renderFunction(result, scope, builder.constructor, newbase);
   if (typeof(res) == 'function') {
     throw new Error('Attempted to directly include an asynchronous template. Please handle this without the shortcut.');
   }
@@ -210,7 +212,7 @@ shortcuts['include'] = function(builder, scope, args) {
 }
 
 shortcuts['render'] = function(builder, scope, args) {
-  var res = renderFunction(args[0], scope, new builder.constructor());
+  var res = renderFunction(args[0], scope, builder.constructor, newbase);
   if (typeof(res) == 'function') {
     throw new Error('Attempted to render an asynchronous template. Please handle this without the shortcut.');
   }

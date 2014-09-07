@@ -9,7 +9,7 @@ module.exports = function() {
             span['icon-bar']; $span;
             span['icon-bar']; $span;
           $button
-          a['navbar-brand']({href: '/'}); $('Not.js'); $a; //Todo: Logo
+          a['navbar-brand']({href: '/not.js'}); $('Not.js'); $a; //Todo: Logo
         $div
         
         div.collapse['navbar-collapse']({id: 'collapsing-bar'})

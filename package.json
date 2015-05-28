@@ -1,7 +1,7 @@
 {
   "name": "not.js",
   "repository": "git://github.com/weswigham/not.js",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "license": "MIT",
   "description": "A simple, html template dsl.",
   "keywords": [
@@ -13,7 +13,7 @@
   ],
   "main": "not.js",
   "scripts": {
-    "test": "mocha --harmony"
+    "test": "mocha --harmony --harmony-proxies"
   },
   "dependencies": {
     "escape-html": "~1.0.1"
@@ -24,6 +24,6 @@
     "promise": "~5.0.0"
   },
   "engines": {
-    "node": "~0.10"
+    "node": ">=0.10"
   }
 }

@@ -54,10 +54,10 @@ module.exports = function (grunt) {
       'esac',
       '',
       'if [ -x "$basedir/node" ]; then',
-      '  "$basedir/node" --harmony "$basedir/../grunt-cli/bin/grunt" "$@"',
+      '  "$basedir/node" --harmony --harmony_proxies "$basedir/../grunt-cli/bin/grunt" "$@"',
       '  ret=$?',
       'else ',
-      '  node --harmony "$basedir/../grunt-cli/bin/grunt" "$@"',
+      '  node --harmony --harmony_proxies "$basedir/../grunt-cli/bin/grunt" "$@"',
       '  ret=$?',
       'fi',
       'exit $ret    '
@@ -66,9 +66,9 @@ module.exports = function (grunt) {
     
     grunt.file.write(binpath+'grunt.cmd',[
       '@IF EXIST "%~dp0\\node.exe" (',
-      '  "%~dp0\\node.exe" --harmony "%~dp0\\..\\grunt-cli\\bin\\grunt" %*',
+      '  "%~dp0\\node.exe" --harmony --harmony_proxies "%~dp0\\..\\grunt-cli\\bin\\grunt" %*',
       ') ELSE (',
-      '  node --harmony "%~dp0\\..\\grunt-cli\\bin\\grunt" %*',
+      '  node --harmony --harmony_proxies "%~dp0\\..\\grunt-cli\\bin\\grunt" %*',
       ')'
       ].join(grunt.util.linefeed)
     );

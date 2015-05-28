@@ -1,6 +1,6 @@
 $(function() {
   var readOnly = true;
-  if (window.Proxy && window.Proxy.createFunction) {
+  if (window.Proxy) {
     readOnly = false;
   }
   

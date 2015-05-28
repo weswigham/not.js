@@ -212,7 +212,7 @@ shortcuts['include'] = function(builder, scope, args) {
 }
 
 shortcuts['render'] = function(builder, scope, args) {
-  var res = renderFunction(args[0], scope, builder.constructor, newbase);
+  var res = renderFunction(args[0], scope, builder.constructor, builder.basepath);
   if (typeof(res) == 'function') {
     throw new Error('Attempted to render an asynchronous template. Please handle this without the shortcut.');
   }
@@ -252,7 +252,14 @@ function jshtmlProxy(builder) {
       scope = scopeName;
       scopeName = defaultScopeName;
     }
-    var proxy = Proxy.createFunction({ //TODO: Alternate implementation for the newer harmony proxy API supported by Firefox
+    var makeProxy = function(config, target) {
+      if (Proxy.createFunction) {
+        return Proxy.createFunction(config, target);
+      } else {
+        return new Proxy(target, config);
+      }
+    };
+    var proxy = makeProxy({ //TODO: Alternate implementation for the newer harmony proxy API supported by Firefox
       getPropertyDescriptor: function(key) {return {value: true, configurable: true}}, //We are all the properties!
       get: function(rec, key) {
         return (function() {

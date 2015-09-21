@@ -256,7 +256,7 @@ function jshtmlProxy(builder) {
       if (Proxy.createFunction) {
         return Proxy.createFunction(config, target);
       } else {
-        return new Proxy(target, config);
+        return new Proxy(target || function() {}, config);
       }
     };
     var proxy = makeProxy({ //TODO: Alternate implementation for the newer harmony proxy API supported by Firefox
@@ -271,7 +271,7 @@ function jshtmlProxy(builder) {
             }
             if (key.slice(-1) === indicator) {
               builder.pushSingleToken(key.slice(0,key.length-1));
-              var classproxy = Proxy.createFunction({
+              var classproxy = makeProxy({
                 get: function(rec, key) {
                   builder.addClass(key);
                   return classproxy;
@@ -298,7 +298,7 @@ function jshtmlProxy(builder) {
               }
             }  else {
               builder.pushStartToken(key);
-              var classproxy = Proxy.createFunction({
+              var classproxy = makeProxy({
                 get: function(rec, nkey) {
                   if (nkey === 'valueOf') {
                     if (shortcuts.hasOwnProperty(key)) {

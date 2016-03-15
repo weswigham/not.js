@@ -1,0 +1,5 @@
+# Set the default behavior, in case people don't have core.autocrlf set.
+* text=auto
+
+# DForce js to be LF line endings as we check JS textual content in tests
+*.js text eol=lf

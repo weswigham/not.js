@@ -249,7 +249,7 @@ module.exports = function(scope) {
 ```
 
 The result object is built as tags appear. Don't mix async and sync calls - The template will probably 
-build in an unexplected order. Use promise chaining or the like to execute chunks of async template in
+build in an unexpected order. Use promise chaining or the like to execute chunks of async template in
 a known order.
 
 Doing the same thing with a lot of things in the scope object but still within an implied context:
@@ -297,18 +297,3 @@ module.exports = function() {
                   //    .then(function(rendered) {doStuff(rendered);});
 };
 ```
-
-
-`not.js` Is From The Future
-===========================
-`not.js` relies on a draft of the [harmony](http://en.wikipedia.org/wiki/ECMAScript#ECMAScript_Harmony_.286th_Edition.29) 
-[Proxy object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy) currently available
-in your standard `node` v0.10 installation with the `--harmony` flag enabled. Currently, it only has an implementation 
-for the `node` v0.10 proxy implementation (which is based on an older version of the spec), but another based on the
-new Proxy spec (available now in your local Firefox instance) will be available soon (tm).
-
-TODO
-====
-Benchmarks?
-
-`gh-pages` branch written with `not.js`.

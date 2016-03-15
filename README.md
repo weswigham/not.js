@@ -7,9 +7,9 @@ It's all just valid javascript... but... not.
 
 Usage
 =====
-####NOTE: Ensure any node app using `not.js` is run with `--harmony`, or hilarious failure will ensue
+#NOTE: Ensure any node app using `not.js` has access to `Proxy` objects - this can mean running with `--harmony` or other flags depending on the node version in question
 
-The tests are a great place to look, but here's the gist of it:
+The tests are a great place to look for many examples, but here's the gist of it:
 `implied.not.js`:
 ```js
 module.exports = function() { //Export a plain js function

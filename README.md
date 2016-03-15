@@ -1,8 +1,8 @@
 `not.js` [![Build Status](https://travis-ci.org/weswigham/not.js.svg?branch=master)](https://travis-ci.org/weswigham/not.js)
 =======
 
-`not.js` is a [DSL](http://en.wikipedia.org/wiki/Domain-specific_language) written in javascript, 
-for html. It allows you to easily define html without leaving the comfort of your own javascript file. 
+`not.js` is a [DSL](http://en.wikipedia.org/wiki/Domain-specific_language) written in javascript,
+for html. It allows you to easily define html without leaving the comfort of your own javascript file.
 It's all just valid javascript... but... not.
 
 Usage
@@ -17,40 +17,40 @@ module.exports = function() { //Export a plain js function
   ul({class: 'un-list'}) //Pass attributes by calling the tag
   for (var scratch in $scope.items) {
     if ($scope.items.hasOwnProperty(scratch)) { //Do logic wherever
-    
+
       li.item //Chain classes off tags
         $('Item: '+$scope.items[scratch]) //Write text nodes with $
       $li
-      
+
     }
   }
   $ul //Write close nodes by ending the tag with a $
 };
 ```
-You'll notice that virtually nothing in that function is defined within that file. How is this still valid, you ask? 
+You'll notice that virtually nothing in that function is defined within that file. How is this still valid, you ask?
 Magic. And dynamic runtime environment overrides. Mostly magic.
 
 Tags
 ----
-All top-level identifiers aside from `$scope` and `$` are interpreted as tags. Bare identifiers are written as 
-opening tags. Identifiers ending with `$` are interpreted as self-closing tags. Identifiers starting with 
-`$` are ending tags. 'Call' a start or self-closing tag with an object to specify any attributes you'd like 
-on the tag. The `$` function acts as a text node - strings you pass are escaped. You may instead pass a function 
+All top-level identifiers aside from `$scope` and `$` are interpreted as tags. Bare identifiers are written as
+opening tags. Identifiers ending with `$` are interpreted as self-closing tags. Identifiers starting with
+`$` are ending tags. 'Call' a start or self-closing tag with an object to specify any attributes you'd like
+on the tag. The `$` function acts as a text node - strings you pass are escaped. You may instead pass a function
 with a comment inside it, which will be interpreted as a multiline string. Passing 'true' as the second argument
 disables escaping. Multiple tags can go on one line if separated by a semicolon.
 
 Classes
 -------
-Chaining off a tag or a called tag will result in classes being added to that tag. 
+Chaining off a tag or a called tag will result in classes being added to that tag.
 `div({class="col-md-6"}).content.main` -> `<div class="col-md-6 content main">`
 
 Logic
 -----
-Just write javascript. Really; write _any_ javascript inline with your markup and it just works (tm). 
+Just write javascript. Really; write _any_ javascript inline with your markup and it just works (tm).
 
 Known exceptions to 'just working':
-`var` statements don't function immediately within an explicitly defined context. 
-Make an IIFE within the explicit with (like in the first test) to get around the problem, 
+`var` statements don't function immediately within an explicitly defined context.
+Make an IIFE within the explicit with (like in the first test) to get around the problem,
 or use implied contexts. Or don't use locals.
 
 Scope
@@ -62,7 +62,7 @@ the dsl call. Otherwise, your API looks like so:
 - `create([builder])`: Outputs a proxy object for use - see `test/html.js` for usage.
 - `prepareFunc(func, [builder])`: Outputs a function that when called with a scope object, returns the builder's result
 - `renderFunc(func, [scope], [builder])`: Shortcut for `prepareFunc(func, builder)(scope)`
-- `renderPath(path, [options], callback)`: Connect-standard view engine callback (aliased to `__express`). 
+- `renderPath(path, [options], callback)`: Connect-standard view engine callback (aliased to `__express`).
 Valid options are:
 ```js
 {
@@ -71,11 +71,11 @@ Valid options are:
                          // simply calls the required function with
                          // the scope, expecting a string in return
                          // defaults to false
-    
-    "builder": builder, //Optional builder function to output as 
+
+    "builder": builder, //Optional builder function to output as
                         // some alternate format (like DOM nodes)
                         // defaults to string
-    
+
     "scope": object //Object to expose within the dsl for use in logic
                     // defaults to {}
 }
@@ -93,7 +93,7 @@ as
 ```js
 - include(path)
 ```
-This will directly include the template at the path in question at that 
+This will directly include the template at the path in question at that
 point in this template, using the current scope object. It does not support
 asynchronously resolving templates.
 
@@ -111,8 +111,8 @@ Renders a function into the current output using the current scope.
 ```js
 - using(name)
 ```
-This has no simple translations. Any content following the `using`, rather than 
-being written to the output buffer, is written to `$scope[name]`. It's useful 
+This has no simple translations. Any content following the `using`, rather than
+being written to the output buffer, is written to `$scope[name]`. It's useful
 for making a layout or placeholder based structure, enabling things like
 ```js
 -using('headers')
@@ -166,11 +166,11 @@ as
 ```
 A shorthand for using html comments, if you need to template those for some reason.
 
-The general form is `- <shortcut>[(<args>)]`. The `-` is the unary minus operator - 
-if automatic semicolon insertion fails you (and it will), end the prior line with a 
-semicolon by hand to ensure it is interpreted as unary minus. If you fail to do so, 
-the interpreter has a penchant of doing things out of the order you anticipated, 
-yielding unexpected results. Additionally, the `~` and `+` unary operator should function 
+The general form is `- <shortcut>[(<args>)]`. The `-` is the unary minus operator -
+if automatic semicolon insertion fails you (and it will), end the prior line with a
+semicolon by hand to ensure it is interpreted as unary minus. If you fail to do so,
+the interpreter has a penchant of doing things out of the order you anticipated,
+yielding unexpected results. Additionally, the `~` and `+` unary operator should function
 identically - so `- comment` and `~comment` should _both_ be acceptable. Use whatever
 operator suits your preference, but I recommend you at least stay consistent.
 
@@ -201,7 +201,7 @@ module.exports = function() {
     });
 };
 ```
-Since `http` (and `JSON`) will be overridden by the implicit context. You have two options: 
+Since `http` (and `JSON`) will be overridden by the implicit context. You have two options:
 - Export the desired functions into the `$scope`
 - Utilize _explicit contexts_ for complicated files
 
@@ -238,7 +238,7 @@ module.exports = function(scope) {
           $html
         }
 
-        resolve(context.collect()); //The total results are returned when .collect() is called 
+        resolve(context.collect()); //The total results are returned when .collect() is called
                                     //(and can be reset with a call to .restart())
       });
     });
@@ -248,7 +248,7 @@ module.exports = function(scope) {
 };
 ```
 
-The result object is built as tags appear. Don't mix async and sync calls - The template will probably 
+The result object is built as tags appear. Don't mix async and sync calls - The template will probably
 build in an unexpected order. Use promise chaining or the like to execute chunks of async template in
 a known order.
 
@@ -289,7 +289,7 @@ module.exports = function() {
       });
     });
   });
-    
+
   return promise; //Implied functions that return promises have their .proxy attribute
                   //set to the proxy generated for them - call .collect() on the proxy
                   //to get the result string when the promise resolves

@@ -3,7 +3,7 @@ var notjs = require('../not');
 module.exports = function(scope) {
   var context = notjs.create(); //Get a dsl context object, let the string builder be implied
   with(context(scope)) {
-  
+
     h1; $($scope.title); $h1
     ul({class: 'un-list'})
     for ($scope.scratch in $scope.items) {
@@ -14,7 +14,7 @@ module.exports = function(scope) {
       }
     }
     $ul
-    
+
   }
   return context.collect();
 };

@@ -47,7 +47,7 @@ stringBuilder.prototype._toAttr = function(obj) {
       }
     }
   }
-  
+
   var str = new String(ret.join(' ')); //Wrap with 'String' so it has methods/properties
   str.original = obj; //for rewriting attr
   str.arguments = arguments; //for capturing for use in shortcuts
@@ -138,12 +138,12 @@ stringBuilder.prototype.addClass = function(name) {
   var last = this.buffer.pop();
   if (third === ' ') {
     var oldattr = this.buffer.pop();
-    
+
     var obj = oldattr.original;
-    
+
     obj['class'] = ((obj['class'] ? obj['class']+' ' : '')+name);
     var attr = this._toAttr(obj);
-    
+
     this.buffer.push(attr);
     this.buffer.push(last);
   } else { //otherwise, insert an attr with the class
@@ -245,7 +245,6 @@ shortcuts['done'] = function(builder, scope, args) {
   }
 }
 
-
 function jshtmlProxy(builder) {
   var ret = function(scopeName, scope) {
     if (!scope) {
@@ -265,7 +264,7 @@ function jshtmlProxy(builder) {
       get: function(rec, key) {
         return (function() {
             if (key === scopeName) {
-              return scope; 
+              return scope;
             }
             if (key === indicator) {
               return proxy;
@@ -289,7 +288,7 @@ function jshtmlProxy(builder) {
                 valueOf: function() {
                   if (shortcuts.hasOwnProperty(key)) {
                     var args = builder.dropLastToken();
-                    
+
                     shortcuts[key](builder, scope, args);
                   } else {
                     throw new Error('Attempted to call nonexistant shortcut');
@@ -304,7 +303,7 @@ function jshtmlProxy(builder) {
                   if (nkey === 'valueOf') {
                     if (shortcuts.hasOwnProperty(key)) {
                       var args = builder.dropLastToken();
-                      
+
                       shortcuts[key](builder, scope, args);
                     } else {
                       throw new Error('Attempted to call nonexistant shortcut');
@@ -330,18 +329,18 @@ function jshtmlProxy(builder) {
         builder.pushRaw(str, noEscape);
       }
     });
-    
+
     return proxy;
   };
-  
+
   ret.collect = function() {
     return builder.complete();
   };
-  
+
   ret.restart = function() {
     builder.reset();
   }
-  
+
   return ret;
 }
 
@@ -349,7 +348,7 @@ var funcStringCache = {}; //Cache stringified functions for implied usage
 
 function prepareFunc(func, builder, basepath) { //Prepare an implied function for repeated use
   funcStringCache[func] = funcStringCache[func] || ('(function() { with (proxy(scope)) { return ('+func.toString()+')('+defaultScopeName+'); } })()');
-  
+
   return function(scope) {
     var scope = scope || {};
     var builder = builder || stringBuilder;
@@ -363,17 +362,17 @@ function prepareFunc(func, builder, basepath) { //Prepare an implied function fo
   }
 }
 
-function renderFunction(func, scope, builder, basepath) { 
+function renderFunction(func, scope, builder, basepath) {
   return prepareFunc(func, builder, basepath)(scope);
 }
 
 function renderPath(path, options, cb) {
-  
+
   if (typeof(options) === 'function') {
     cb = options;
     options = {};
   }
-  
+
   var func = require(path); //Yes.
   if (!options.basepath) {
     var pathlib = require('path');

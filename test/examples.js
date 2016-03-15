@@ -3,22 +3,22 @@ require('chai').should();
 
 describe('the first functional example in the readme', function() {
   it('should run and produce correct html', function() {
-  
+
     var first = function() { //Export a plain js function
       h1; $($scope.title); $h1 //Write your tags, seperated by semicolons if on the same line
       ul({class: 'un-list'}) //Pass attributes by calling the tag
       for (var scratch in $scope.items) {
         if ($scope.items.hasOwnProperty(scratch)) { //Do logic wherever
-        
+
           li.item //Chain classes off tags
             $('Item: '+$scope.items[scratch]) //Write text nodes with $
           $li
-          
+
         }
       }
       $ul //Write close nodes by ending the tag with a $
     };
-    
+
     var res = notjs.renderFunc(first, {title: 'Yes', items: ['Foo', 'Bar']});
     res.should.be.equal('<h1>Yes</h1><ul class="un-list"><li class="item">Item: Foo</li><li class="item">Item: Bar</li></ul>')
   });
@@ -27,7 +27,7 @@ describe('the first functional example in the readme', function() {
 describe('the second functional example in the readme', function() {
   it('should run and produce correct html', function(done) {
     this.timeout(5000);
-    
+
     var http = require('http');
     var Promise = require('promise');
 
@@ -65,7 +65,7 @@ describe('the second functional example in the readme', function() {
 
       return promise; //For your convenience, the renderPath function will handle promises
     };
-    
+
     explicitExample({}).then(function(data) {
       data.should.not.be.null; //I just realized that testing 'should look like the github homepage' is hard
       done();
@@ -76,7 +76,7 @@ describe('the second functional example in the readme', function() {
 describe('the third functional example in the readme', function() {
   it('should run and produce correct html', function(done) {
     this.timeout(5000);
-    
+
   var implicitExample = function() {
     var promise = new $scope.Promise(function(resolve, reject) {
       $scope.http.get('http://www.github.com', function(cli) {
@@ -102,10 +102,10 @@ describe('the third functional example in the readme', function() {
         });
       });
     });
-      
+
     return promise;
   };
-  
+
     var result = notjs.renderFunc(implicitExample, {
       Promise: require('promise'),
       http: require('http'),

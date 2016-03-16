@@ -14,14 +14,16 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "grunt-notjs": "~0.0.1",
     "grunt": "~0.4.2",
     "grunt-cli": "~0.1.13",
-    "grunt-contrib-watch": "~0.6.1"
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-watch": "~0.6.1",
+    "grunt-notjs": "~0.0.1"
   },
   "scripts": {
     "build": "grunt build",
     "harmonize": "grunt harmonize",
-    "watch": "grunt watch"
+    "watch": "grunt watch",
+    "copy-lib": "grunt copy"
   }
 }

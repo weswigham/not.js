@@ -55,6 +55,6 @@ $ul
     
     h6['text-center']; $('Try viewing this page in firefox, then you can play with the code live!'); $h6;
   $div;
-  
+
   -include('_layouts/nav.not.js');
 };

@@ -31,11 +31,18 @@ module.exports = function (grunt) {
         files: ['./_templates/**/*.not.js'],
         tasks: ['build']
       }
+    },
+    copy: {
+        lib: {
+            src: './node_modules/not.js/not.js',
+            dest: './assets/js/lib/not.js'
+        }
     }
   });
 
   grunt.loadNpmTasks('grunt-notjs');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-copy');
 
   grunt.registerTask('build', ['notjs']);
 

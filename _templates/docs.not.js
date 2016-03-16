@@ -4,7 +4,7 @@ module.exports = function() {
     div.container  
       div.jumbotron
         h1['text-center']
-          $('Proper API references are coming soon! In the meantime, checkout the '); a({href: 'https://github.com/weswigham/not.js/blob/master/README.md'}); $('README'); $a;
+          $('Checkout the '); a({href: 'https://github.com/weswigham/not.js/blob/master/README.md'}); $('README'); $a; $(' for usage details.');
         $h1
       $div
     $div;

@@ -54,7 +54,7 @@ $ul
     $div
     
     h6['text-center'];
-      $('If you\'re having trouble, try viewing this page in '); a({href: 'http://caniuse.com/#search=proxy'}); $('a modern browser'); $a; $('for a live editing demo!');
+      $('If you\'re having trouble, try viewing this page in '); a({href: 'http://caniuse.com/#search=proxy'}); $('a modern browser'); $a; $(' for a live editing demo!');
     $h6;
   $div;
 

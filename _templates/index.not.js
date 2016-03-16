@@ -53,7 +53,9 @@ $ul
       $div
     $div
     
-    h6['text-center']; $('Try viewing this page in firefox, then you can play with the code live!'); $h6;
+    h6['text-center'];
+      $('If you\'re having trouble, try viewing this page in '); a({href: 'http://caniuse.com/#search=proxy'}); $('a modern browser'); $a; $('for a live editing demo!');
+    $h6;
   $div;
 
   -include('_layouts/nav.not.js');

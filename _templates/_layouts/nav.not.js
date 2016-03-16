@@ -29,7 +29,7 @@ module.exports = function() {
   
     nav.navbar['navbar-default']['navbar-fixed-bottom']({role: 'navigation'})
       div.container
-        p['navbar-text']; $('Not.js is maintained by '); a({href: 'http://ham.io'}); $('weswigham'); $a; $p;
+        p['navbar-text']; $('Not.js is maintained by '); a({href: 'http://keybase.io/www'}); $('weswigham'); $a; $p;
   
         p['navbar-text']['navbar-right']
           $('Want more examples? Check out '); a({href: 'https://github.com/weswigham/not.js/tree/gh-pages'}); $('this site'); $a; $('!')

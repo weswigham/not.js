@@ -99,7 +99,7 @@ describe('document writing shortcuts', function() {
   });
 
   describe('the script shortcut', function() {
-    it('inserts a acript tag', function() {
+    it('inserts a script tag', function() {
       var content = function() {
         html
           head;
@@ -112,7 +112,7 @@ describe('document writing shortcuts', function() {
       res.should.be.equal('<html><head><script src="/a/script"></script></head></html>');
     });
 
-    it('inserts a acript tag using other unary operators', function() {
+    it('inserts a script tag using other unary operators', function() {
       var content = function() {
         html
           head;

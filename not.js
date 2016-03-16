@@ -260,7 +260,7 @@ function jshtmlProxy(builder) {
     };
     var proxy = makeProxy({ //TODO: Alternate implementation for the newer harmony proxy API supported by Firefox
       getPropertyDescriptor: function(key) {return {value: true, configurable: true}}, //We are all the properties!
-      has: function(target, key) { return true; }, // New version of the has-all-the-things trap
+      has: function(target, key) { if (typeof key !== "symbol") { return true; } }, // New version of the has-all-the-things trap
       get: function(rec, key) {
         return (function() {
             if (key === scopeName) {

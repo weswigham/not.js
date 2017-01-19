@@ -263,6 +263,9 @@ function jshtmlProxy(builder) {
       has: function(target, key) { if (typeof key !== "symbol") { return true; } }, // New version of the has-all-the-things trap
       get: function(rec, key) {
         return (function() {
+            if (typeof key === "symbol") {
+              return undefined;
+            }
             if (key === scopeName) {
               return scope;
             }
@@ -273,6 +276,9 @@ function jshtmlProxy(builder) {
               builder.pushSingleToken(key.slice(0,key.length-1));
               var classproxy = makeProxy({
                 get: function(rec, key) {
+                  if (typeof key === "symbol") {
+                    return undefined;
+                  }
                   builder.addClass(key);
                   return classproxy;
                 }
@@ -300,6 +306,9 @@ function jshtmlProxy(builder) {
               builder.pushStartToken(key);
               var classproxy = makeProxy({
                 get: function(rec, nkey) {
+                  if (typeof nkey === "symbol") {
+                    return undefined;
+                  }
                   if (nkey === 'valueOf') {
                     if (shortcuts.hasOwnProperty(key)) {
                       var args = builder.dropLastToken();

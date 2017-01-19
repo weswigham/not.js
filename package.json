@@ -13,7 +13,7 @@
   ],
   "main": "not.js",
   "scripts": {
-    "test": "mocha --harmony --harmony-proxies"
+    "test": "mocha"
   },
   "dependencies": {
     "escape-html": "~1.0.1"

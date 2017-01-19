@@ -1,4 +1,12 @@
 language: node_js
 sudo: false
 node_js:
-- "node"
+- node
+deploy:
+  provider: npm
+  email: wwigham@gmail.com
+  api_key:
+    secure: ocPhhPTwyqLcGUHHUpUiNcrZGSA3/IMpLhRQT+BbPgnfkVfUoBBfj95Dym3WnMD3xOuywDhPjMi6jy5uV7aYQohySP3xjGtcVhIbcs1C+FzkqoY+ZesIYlHkPDNEgfG4n7Vd9+HDT8cHvoMBcJvczKxCGWWM1o7hnSET7FwsnXs=
+  on:
+    tags: true
+    repo: weswigham/not.js

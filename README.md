@@ -7,7 +7,7 @@ It's all just valid javascript... but... not.
 
 Usage
 =====
-######NOTE: Ensure any node app using `not.js` has access to `Proxy` objects - this can mean running with `--harmony` or other flags depending on the node version in question
+###### NOTE: Ensure any node app using `not.js` has access to `Proxy` objects - this can mean running with `--harmony` or other flags depending on the node version in question
 
 The tests are a great place to look for many examples, but here's the gist of it:
 `implied.not.js`:
